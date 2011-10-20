@@ -1,9 +1,10 @@
 class Rubytter
   class OAuth
-    def initialize(key, secret, ca_file = nil)
+    def initialize(key, secret, ca_file = nil, proxy = nil)
       @key = key
       @secret = secret
       @ca_file = ca_file
+      @proxy = proxy || ENV["HTTP_PROXY"]
     end
 
     def get_access_token_with_xauth(login, password)
@@ -22,10 +23,10 @@ class Rubytter
     def create_consumer
       if @ca_file
         consumer = ::OAuth::Consumer.new(@key, @secret,
-          :site => 'https://api.twitter.com', :ca_file => @ca_file)
+          :site => 'https://api.twitter.com', :ca_file => @ca_file, :proxy => @proxy)
       else
         consumer = ::OAuth::Consumer.new(@key, @secret,
-          :site => 'https://api.twitter.com')
+          :site => 'https://api.twitter.com', :proxy => @proxy)
         consumer.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
       consumer
